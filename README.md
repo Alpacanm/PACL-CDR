@@ -1,6 +1,6 @@
 
 
-Official codebase for the paper PACL-CDR:Popularity-Adaptive Contrastive Learning for Cross-Domain Recommendation
+PACL-CDR:Popularity-Adaptive Contrastive Learning for Cross-Domain Recommendation
 
 
 
