@@ -16,10 +16,6 @@ To address these challenges, we propose a novel cross-domain recommendation fram
 
 We use the datasets provided by [DisenCDR](https://github.com/cjx96/DisenCDR)
 
-All used datasets can be downloaded at [WSDM2023-UniCDR-datasets](https://drive.google.com/drive/folders/1DCYiFU6GCVj681GKYUY2d_BJFln1-8gL?usp=share_link)
-Note that all datasets are required to unzip in the root directory.
-
-
 
 ## Usage
 
