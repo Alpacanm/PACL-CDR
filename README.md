@@ -16,6 +16,8 @@ To address these challenges, we propose a novel cross-domain recommendation fram
 
 We use the datasets provided by [DisenCDR](https://github.com/cjx96/DisenCDR)
 
+## Environment
+Using Python 3.8, with other detailed environment information referenced in the requirements.txt file.
 
 ## Usage
 
