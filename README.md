@@ -6,7 +6,7 @@ Official codebase for the paper PACL-CDR:Popularity-Adaptive Contrastive Learnin
 
 ## Overview
 
-![overview](https://github.com/Canyizl/PPA-for-CDR/blob/main/fig/introfig.png)
+![overview](https://github.com/Alpacanm/PACL-CDR/fig/model.pdf)
 
 **Abstract:** Cross-domain recommendation (CDR) has garnered significant attention for its potential to mitigate data sparsity and cold-start issues by facilitating knowledge transfer from source to target domains. While recent contrastive CDR methods have attempted to address information heterogeneity and behavioral discrepancies via positive and negative pair construction, two persistent challenges remain: (1) popularity bias, where unpopular items are frequently misclassified as negative samples, resulting in an overemphasis on popular items and the neglect of unpopular items; and (2) over-reliance on overlapping users, which restricts the construction of positive and negative pairs, hinders the modeling of non-overlapping user preferences, and results in incomplete or biased knowledge transfer. 
 
