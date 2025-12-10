@@ -25,9 +25,9 @@ Running example:
 
 ```shell
 # sport_phone
-CUDA_VISIBLE_DEVICES=2 python -u train_rec.py  --static_sample --cuda --domains sport_phone --aggregator Transformer --num_epoch 100 --batch_size 1024 --lr 0.002  --n_intents 15 --dataset_path ./datasets/dual-user-intra/dataset --seed 613 --emb_size 128 --n_layers 4 --DCCF_rate 1 --layers 3 --lambada 0.5 --gama 0.6 --temperature 0.4 --De_rate 1 --PAAC_rate 1
+CUDA_VISIBLE_DEVICES=2 python -u train_rec.py  --static_sample --cuda --domains sport_phone --batch_size 1024 --dataset_path ./datasets/dual-user-intra/dataset  --De_rate 1 --PAAC_rate 1
 
 # electronic_phone
-CUDA_VISIBLE_DEVICES=1 python -u train_rec.py  --static_sample --cuda --domains electronic_phone --aggregator Transformer --num_epoch 100 --batch_size 1024 --lr 0.002  --n_intents 15 --dataset_path ./datasets/dual-user-intra/dataset --seed 6216 --emb_size 128 --n_layers 4 --DCCF_rate 1 --layers 3 --lambada 0.5 --gama 0.6 --temperature 0.4 --De_rate 1.6 --PAAC_rate 0.8
+CUDA_VISIBLE_DEVICES=1 python -u train_rec.py  --static_sample --cuda --domains electronic_phone --batch_size 1024 --dataset_path ./datasets/dual-user-intra/dataset --De_rate 1.6 --PAAC_rate 0.8
 
 ```
