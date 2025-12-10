@@ -60,33 +60,6 @@ class Model(nn.Module):
 
         return mainEmbeds
 
-    # def loss_graphcl(self, x1, x2, users, items):
-    #     T = self.opt["temp"]
-    #     user_embeddings1, item_embeddings1 = torch.split(x1, [self.user, self.item], dim=0)
-    #     user_embeddings2, item_embeddings2 = torch.split(x2, [self.user, self.item], dim=0)
-    #     user_embeddings1 = F.normalize(user_embeddings1, dim=1)
-    #     item_embeddings1 = F.normalize(item_embeddings1, dim=1)
-    #     user_embeddings2 = F.normalize(user_embeddings2, dim=1)
-    #     item_embeddings2 = F.normalize(item_embeddings2, dim=1)
-    #
-    #     user_embs1 = F.embedding(users, user_embeddings1)
-    #     item_embs1 = F.embedding(items, item_embeddings1)
-    #     user_embs2 = F.embedding(users, user_embeddings2)
-    #     item_embs2 = F.embedding(items, item_embeddings2)
-    #     all_embs1 = torch.cat([user_embs1, item_embs1], dim=0)
-    #     all_embs2 = torch.cat([user_embs2, item_embs2], dim=0)
-    #     all_embs1_abs = all_embs1.norm(dim=1)
-    #     all_embs2_abs = all_embs2.norm(dim=1)
-    #     # print(all_embs1.shape, all_embs2.shape)
-    #
-    #     sim_matrix = torch.einsum('ik,jk->ij', all_embs1, all_embs2) / torch.einsum('i,j->ij', all_embs1_abs,
-    #                                                                                 all_embs2_abs)
-    #     sim_matrix = torch.exp(sim_matrix / T)
-    #     pos_sim = sim_matrix[np.arange(all_embs1.shape[0]), np.arange(all_embs1.shape[0])]
-    #     loss = pos_sim / (sim_matrix.sum(dim=1) - pos_sim)
-    #     loss = - torch.log(loss)
-    #
-    #     return loss
     def loss_graphcl(self, x1, x2, users, items):
         T = self.opt["temp"]
 
@@ -94,29 +67,11 @@ class Model(nn.Module):
         user_embeddings1, item_embeddings1 = torch.split(x1, [self.user, self.item], dim=0)
         user_embeddings2, item_embeddings2 = torch.split(x2, [self.user, self.item], dim=0)
 
-        # # 打印分割后嵌入的形状
-        # print("user_embeddings1 shape:", user_embeddings1.shape)
-        # print("item_embeddings1 shape:", item_embeddings1.shape)
-        # print("user_embeddings2 shape:", user_embeddings2.shape)
-        # print("item_embeddings2 shape:", item_embeddings2.shape)
-
         # Step 2: 归一化处理
         user_embeddings1 = F.normalize(user_embeddings1, dim=1)
         item_embeddings1 = F.normalize(item_embeddings1, dim=1)
         user_embeddings2 = F.normalize(user_embeddings2, dim=1)
         item_embeddings2 = F.normalize(item_embeddings2, dim=1)
-
-        # # 打印归一化后的范数
-        # print("user_embeddings1 norm mean:", user_embeddings1.norm(dim=1).mean().item())
-        # print("item_embeddings1 norm mean:", item_embeddings1.norm(dim=1).mean().item())
-        # print("user_embeddings2 norm mean:", user_embeddings2.norm(dim=1).mean().item())
-        # print("item_embeddings2 norm mean:", item_embeddings2.norm(dim=1).mean().item())
-
-        # # Step 3: 检查索引范围并过滤非法值
-        # print("users max:", users.max().item(), "users min:", users.min().item())
-        # print("items max:", items.max().item(), "items min:", items.min().item())
-        # print("item_embeddings1 size(0):", item_embeddings1.size(0))
-        # print("user_embeddings1 size(0):", user_embeddings1.size(0))
 
         # 用户索引过滤
         user_mask = (users >= 0) & (users < user_embeddings1.size(0))  # 合法索引范围
@@ -126,51 +81,28 @@ class Model(nn.Module):
         item_mask = (items >= 0) & (items < item_embeddings1.size(0))  # 合法索引范围
         valid_items = items[item_mask]
 
-        # 检查过滤后的索引是否为空
-        if valid_users.numel() == 0 or valid_items.numel() == 0:
-            raise ValueError("All users or items indices are invalid after filtering!")
-        #
-        # print("Filtered users shape:", valid_users.shape)
-        # print("Filtered items shape:", valid_items.shape)
-
         # Step 4: 嵌入操作
         user_embs1 = F.embedding(valid_users, user_embeddings1)
         item_embs1 = F.embedding(valid_items, item_embeddings1)
         user_embs2 = F.embedding(valid_users, user_embeddings2)
         item_embs2 = F.embedding(valid_items, item_embeddings2)
-        #
-        # # 打印嵌入结果的形状
-        # print("user_embs1 shape:", user_embs1.shape)
-        # print("item_embs1 shape:", item_embs1.shape)
-        # print("user_embs2 shape:", user_embs2.shape)
-        # print("item_embs2 shape:", item_embs2.shape)
 
         # Step 5: 拼接用户和物品嵌入
         all_embs1 = torch.cat([user_embs1, item_embs1], dim=0)
         all_embs2 = torch.cat([user_embs2, item_embs2], dim=0)
 
-        # # 打印拼接结果的形状
-        # print("all_embs1 shape:", all_embs1.shape)
-        # print("all_embs2 shape:", all_embs2.shape)
-
         # Step 6: 计算嵌入的范数
         all_embs1_abs = all_embs1.norm(dim=1) + 1e-8  # 避免除零
         all_embs2_abs = all_embs2.norm(dim=1) + 1e-8  # 避免除零
-        # print("all_embs1_abs mean:", all_embs1_abs.mean().item())
-        # print("all_embs2_abs mean:", all_embs2_abs.mean().item())
-
+    
         # Step 7: 计算相似度矩阵
         sim_matrix = torch.einsum('ik,jk->ij', all_embs1, all_embs2) / torch.einsum('i,j->ij', all_embs1_abs,
                                                                                     all_embs2_abs)
         sim_matrix = torch.exp(sim_matrix / T)
-        # print("sim_matrix shape:", sim_matrix.shape)
-        # print("sim_matrix sample:", sim_matrix[:5, :5])  # 打印前 5x5 的相似度矩阵
-
+    
         # Step 8: 计算正样本相似度
         pos_sim = sim_matrix[np.arange(all_embs1.shape[0]), np.arange(all_embs1.shape[0])]
-        # print("pos_sim shape:", pos_sim.shape)
-        # print("pos_sim mean:", pos_sim.mean().item())
-
+    
         # Step 9: 计算损失
         loss = pos_sim / (sim_matrix.sum(dim=1) - pos_sim)
         loss = -torch.log(loss + 1e-8)  # 避免 log(0)
@@ -180,8 +112,6 @@ class Model(nn.Module):
             print("Warning: loss contains NaN or Inf values. Fixing...")
             loss = torch.where(torch.isnan(loss) | torch.isinf(loss), torch.zeros_like(loss), loss)
 
-        # print("loss shape:", loss.shape)
-        # print("loss mean:", loss.mean().item())
 
         return loss
 
@@ -508,6 +438,7 @@ class DenoisingNet(nn.Module):
 
         lossl0 = self.lossl0(temperature) * self.opt["lambda0"]
         return bprLoss + regLoss + lossl0
+
 
 
 
