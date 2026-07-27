@@ -52,7 +52,7 @@ def create_arg_parser():
 
     # Training hyperparameters
     parser.add_argument('--cuda', action='store_true')
-    parser.add_argument('--seed', type=int, default=45)
+    parser.add_argument('--seed', type=int, default=6216)
     parser.add_argument('--decay_epoch', type=int, default=10)
     parser.add_argument('--hidden_dim_', type=int, default=32)
     parser.add_argument('--gamma', type=float, default=-0.45)
